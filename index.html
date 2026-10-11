@@ -400,6 +400,34 @@ const PHOTOS = [
     text:"A full Moon occurs when the side of the Moon facing Earth is almost entirely illuminated by the Sun. This phase happens approximately once every 29.5 days as the Moon orbits Earth. The bright lunar surface reveals features such as craters, mountains, and dark volcanic plains called maria.",
     date:"9/10/2022",
     note:"", layout:"tall"
+  },
+   {
+    src:"images/Wizard_Nebula (NGC 7380)_07_20_2026.PNG", obj:"Wizard Nebula",
+    gear:"Seestar 530",
+    text:"The Wizard Nebula, also known as NGC 7380, is an emission nebula located in the constellation Cepheus. Its clouds of gas and dust form a shape that some observers imagine resembles a wizard wearing a pointed hat. It surrounds a young star cluster whose energetic stars illuminate the gas and help create new generations of stars.",
+    date:"7/20/2026",
+    note:"", layout:"duo"
+  },
+   {
+    src:"images/Jupiter_snapshot_10_6_2021.png", obj:"Jupiter",
+    gear:"Celestron Omni AZ 102",
+    text:"Jupiter is the largest planet in our Solar System and the fifth planet from the Sun. Its atmosphere contains colorful cloud bands and the Great Red Spot, a giant storm that has persisted for centuries. Jupiter also has many moons, including Europa, which may contain a liquid ocean beneath its icy surface.",
+    date:"10/6/2021",
+    note:"", layout:"duo"
+  },
+   {
+    src:"images/Pacman_Nebula (NGC 281)_07_14_2026.jpg", obj:"Pacman Nebula",
+    gear:"Seestar 530",
+    text:"The Pacman Nebula, also known as NGC 281, is an emission nebula located in the constellation Cassiopeia. Its shape resembles the classic video game character Pac-Man, giving the nebula its nickname. The region contains young stars, dense clouds of gas, and pillars of dust where star formation can occur.",
+    date:"7/14/2026",
+    note:"", layout:"duo"
+  },
+   {
+    src:"images/Jupiter_snapshot_10_6_2021.png", obj:"Solar Eclipse",
+    gear:"Celestron Omni AZ 102",
+    text:"A solar eclipse occurs when the Moon passes between Earth and the Sun, blocking some or all of the Sun's light from certain locations. During a total solar eclipse, the Moon completely covers the Sun's bright disk, revealing the Sun's outer atmosphere, called the corona. Solar eclipses do not happen every month because the Moon's orbit is tilted relative to Earth's orbit around the Sun.",
+    date:"10/6/2021",
+    note:"", layout:"duo"
   }
 ];
 
@@ -419,9 +447,14 @@ const PLACEHOLDER = [
 ];
 
 function frameHTML(p,i){
-  const inner = p.src
-    ? `<img src="${p.src}" alt="${p.obj}">`
-    : `<div style="width:100%;height:100%;background:${PLACEHOLDER[i%PLACEHOLDER.length]}"></div>`;
+  let inner;
+  if(!p.src){
+    inner = `<div style="width:100%;height:100%;background:${PLACEHOLDER[i%PLACEHOLDER.length]}"></div>`;
+  } else if(/\.mp4$/i.test(p.src)){
+    inner = `<video src="${p.src}" autoplay muted loop playsinline></video>`;
+  } else {
+    inner = `<img src="${p.src}" alt="${p.obj}">`;
+  }
   return `<div class="frame" data-i="${i}">${inner}</div>`;
 }
 function capHTML(p){
