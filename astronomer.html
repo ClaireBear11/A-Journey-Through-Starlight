@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Astronomer — Claire Lee</title>
+<style>
+:root{
+  --bg:#0b0d12; --bg-soft:#12151c; --line:#1e222c;
+  --ink:#eceadf; --body:#c9c6bb; --muted:#8a8f9c;
+  --data:#9a8c6a; --accent:#c98a5a;
+  --serif:Georgia,'Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--body);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased;}
+img{display:block;max-width:100%;}
+
+/* top nav — back to gallery */
+.topnav{
+  position:relative;z-index:2;
+  max-width:900px;margin:0 auto;padding:2rem 2rem 0;
+}
+.topnav a{
+  color:var(--muted);text-decoration:none;font-size:.82rem;
+  letter-spacing:.1em;text-transform:uppercase;transition:color .3s;
+}
+.topnav a:hover{color:var(--ink);}
+
+/* hero */
+.hero{
+  position:relative;overflow:hidden;
+  min-height:48vh;display:flex;flex-direction:column;justify-content:center;
+  padding:4rem 2rem 3rem;margin:0 auto;
+}
+#stars{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.hero > *:not(#stars){position:relative;z-index:1;max-width:900px;width:100%;margin-left:auto;margin-right:auto;}
+.hero .eyebrow{color:var(--data);font-size:.9rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:1.2rem;
+  opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .15s forwards;}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,6vw,4rem);color:var(--ink);line-height:1.05;
+  opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .35s forwards;}
+@keyframes heroIn{to{opacity:1;transform:none;}}
+
+/* body content */
+.content{max-width:720px;margin:0 auto;padding:2rem 2rem 6rem;}
+.content .lead{
+  font-family:var(--serif);font-size:1.3rem;color:var(--ink);
+  line-height:1.6;margin-bottom:2.5rem;
+}
+.content h2{
+  font-family:var(--serif);font-weight:400;color:var(--ink);
+  font-size:1.5rem;margin:2.5rem 0 1rem;
+}
+.content p{margin-bottom:1.4rem;font-size:1.05rem;}
+.content .portrait{
+  width:100%;border-radius:10px;margin:2rem 0;background:var(--bg-soft);
+  aspect-ratio:3/2;object-fit:cover;
+}
+.placeholder-note{
+  color:var(--data);font-style:italic;font-family:var(--serif);
+  border-left:2px solid var(--data);padding-left:1rem;margin:1.4rem 0;opacity:.8;
+}
+.foot{max-width:720px;margin:0 auto;padding:2rem;border-top:1px solid var(--line);
+  text-align:center;color:var(--muted);font-size:.8rem;letter-spacing:.05em;}
+.foot a{color:var(--data);text-decoration:none;}
+.foot a:hover{color:var(--ink);}
+
+@media(max-width:600px){.hero{min-height:40vh;padding:3rem 1.4rem 2rem;}.content{padding:1.5rem 1.4rem 4rem;}}
+@media(prefers-reduced-motion:reduce){.hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+
+<nav class="topnav"><a href="index.html">&#8249; Back to the Gallery</a></nav>
+
+<header class="hero">
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <p class="eyebrow">The Astronomer</p>
+  <h1>About Me</h1>
+</header>
+
+<!-- ============================================================
+     EDIT YOUR STORY HERE
+     Replace the placeholder text below with your own words.
+     ============================================================ -->
+<main class="content">
+  <p class="lead">A one- or two-sentence introduction goes here — who you are and what draws you to the night sky.</p>
+
+  <p class="placeholder-note">This page is a template — replace the text with your own story. Delete these italic notes when you're done.</p>
+
+  <h2>How I started</h2>
+  <p>Write about how you first got into astronomy and astrophotography. What was the first thing you photographed? What hooked you?</p>
+
+  <!-- Optional portrait — put an image in images/ and set the src -->
+  <img class="portrait" src="" alt="" onerror="this.style.display='none'">
+
+  <h2>Why I keep looking up</h2>
+  <p>Write about what astrophotography means to you now — the patience, the cold nights, the connection between science and art. This is a great place to let your voice come through.</p>
+
+  <h2>Beyond the telescope</h2>
+  <p>A few sentences about the rest of your life — violin, poetry, research — and how they connect to the way you see the sky.</p>
+</main>
+
+<footer class="foot">
+  <p>&copy; <span id="year"></span> Claire Lee · <a href="index.html">Return to the Gallery</a></p>
+</footer>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+
+/* shared starfield (same as gallery hero, lighter) */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const canvas=document.getElementById('stars'); if(!canvas) return;
+  const ctx=canvas.getContext('2d'), hero=document.querySelector('.hero');
+  const DENSITY=0.00022, DX=0.10, DY=0.03, TW=0.5;
+  let W,H,stars=[]; const dpr=Math.min(window.devicePixelRatio||1,2);
+  function resize(){
+    W=hero.clientWidth;H=hero.clientHeight;
+    canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n=Math.round(W*H*DENSITY);stars=[];
+    for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.3,base:Math.random()*0.5+0.35,phase:Math.random()*Math.PI*2,speed:Math.random()*0.8+0.4});
+  }
+  let t=0;
+  function frame(){
+    t++;ctx.clearRect(0,0,W,H);
+    for(const s of stars){
+      s.x+=DX;s.y+=DY;if(s.x>W)s.x=0;if(s.y>H)s.y=0;
+      const a=Math.max(0,Math.min(1,s.base+Math.sin(t*0.02*s.speed+s.phase)*TW*0.35));
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(235,238,245,${a})`;ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  resize();window.addEventListener('resize',resize);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
