@@ -68,6 +68,28 @@ img{display:block;max-width:100%;}
 
 @media(max-width:600px){.hero{min-height:40vh;padding:3rem 1.4rem 2rem;}.content{padding:1.5rem 1.4rem 4rem;}}
 @media(prefers-reduced-motion:reduce){.hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}html{scroll-behavior:auto;}}
+
+/* ---- moving carousel ---- */
+.carousel-wrap{max-width:1100px;margin:3rem auto 0;padding:0 2rem;}
+.carousel-wrap h2{
+  font-family:var(--serif);font-weight:400;color:var(--ink);
+  font-size:1.5rem;margin-bottom:1.5rem;max-width:900px;
+  margin-left:auto;margin-right:auto;
+}
+.carousel{overflow:hidden;position:relative;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
+.carousel-track{display:flex;gap:1.5rem;width:max-content;
+  animation:scrollX 40s linear infinite;}
+.carousel:hover .carousel-track{animation-play-state:paused;}
+.carousel-track img{
+  height:320px;width:auto;border-radius:10px;object-fit:cover;
+  background:var(--bg-soft);flex:0 0 auto;
+}
+@keyframes scrollX{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@media(max-width:600px){.carousel-track img{height:220px;}}
+@media(prefers-reduced-motion:reduce){.carousel-track{animation:none;}}
+
 </style>
 </head>
 <body>
@@ -101,6 +123,24 @@ img{display:block;max-width:100%;}
   <h2>Beyond the telescope</h2>
   <p>A few sentences about the rest of your life — violin, poetry, research — and how they connect to the way you see the sky.</p>
 </main>
+
+<!-- ===== moving carousel ===== -->
+<section class="carousel-wrap">
+  <h2>At the eyepiece</h2>
+  <div class="carousel">
+    <div class="carousel-track">
+      <img src="images/astronomer1.jpg" alt="">
+      <img src="images/astronomer2.jpg" alt="">
+      <img src="images/astronomer3.jpg" alt="">
+      <img src="images/astronomer4.jpg" alt="">
+      <!-- duplicate set for seamless loop -->
+      <img src="images/astronomer1.jpg" alt="">
+      <img src="images/astronomer2.jpg" alt="">
+      <img src="images/astronomer3.jpg" alt="">
+      <img src="images/astronomer4.jpg" alt="">
+    </div>
+  </div>
+</section>
 
 <footer class="foot">
   <p>&copy; <span id="year"></span> Claire Lee · <a href="index.html">Return to the Gallery</a></p>
