@@ -116,6 +116,24 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   letter-spacing:.18em;text-transform:uppercase;
 }
 
+/* ---------- SECTION HEADINGS ---------- */
+.section-head{max-width:1100px;margin:0 auto;padding:0 2rem;}
+.section-head:not(:first-child){margin-top:2rem;}
+.section-head .eyebrow{
+  display:block;color:var(--data);font-size:.72rem;
+  letter-spacing:.22em;text-transform:uppercase;margin-bottom:.6rem;
+  font-family:var(--sans);
+}
+.section-head h2{
+  font-family:var(--serif);font-weight:400;color:var(--ink);
+  font-size:clamp(1.6rem,3.5vw,2.4rem);letter-spacing:.01em;
+  padding-bottom:1rem;margin-bottom:3.5rem;border-bottom:1px solid var(--line);
+}
+@media(max-width:720px){
+  .section-head{padding:0 1.4rem;}
+  .section-head h2{margin-bottom:2.5rem;}
+}
+
 /* ---------- GALLERY ---------- */
 .gallery{max-width:1100px;margin:0 auto;padding:4rem 2rem 6rem;}
 
@@ -304,33 +322,16 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
    }
    ============================================================ */
 const PHOTOS = [
-  /* --- Growth pairing: first vs most recent --- */
+
+  /* ===== GALAXIES ===== */
   {
+    section:{eyebrow:"Island universes", title:"Galaxies"},
     layout:"compare",
     title:"Andromeda Galaxy",
     left:  { src:"images/andromeda-first.png", obj:"Andromeda Galaxy · M31", scope:"Celestron Omni AZ 102", date:"9/19/2025" },
     right: { src:"images/andromeda-recent.jpg", obj:"Andromeda Galaxy · M31", scope:"Seestar S50", date:"7/14/2026" },
     text:"The Andromeda Galaxy (Messier 31) is a barred spiral galaxy about 2.5 million light-years away — the most distant object visible to the naked eye. Spanning roughly 152,000 light-years, it is the largest galaxy in our Local Group and contains an estimated one trillion stars. These two frames, captured years apart, show how my imaging has grown over time."
   },
-  {
-    src:"images/hercules-m13.jpg", obj:"Hercules Globular Cluster · M13",
-    gear:"Seestar S50",
-    text:"The Hercules Globular Cluster (Messier 13) is a dense sphere of several hundred thousand stars about 22,000 light-years away, measuring roughly 145 light-years across. At 11.5 to 13 billion years old, it is nearly as old as the universe. Edmond Halley discovered it in 1714, and it can be glimpsed with the naked eye under dark skies.",
-    date: "7/13/2026",
-    note:"", layout:"duo"
-  },
-  {
-    src:"images/Bubble_nebula.PNG", obj:"Bubble Nebula",
-    gear:"Seestar S50",
-    text:"The Bubble Nebula, or NGC 7635, is an emission nebula located in the constellation Cassiopeia. Its bubble shape was created by the powerful stellar wind of a hot, massive star pushing surrounding gas outward. It is approximately 7,000 to 11,000 light-years away from Earth.",
-    date:"10/10/2026",
-    note:"", layout:"duo"
-  },
-
-  /* ---- EMPTY SLOTS — fill these in as you capture more ----
-     Leave src:"" to show a placeholder gradient.
-     When ready: drop the image in images/, put its path in src,
-     write the obj / gear / text, and you're done.               */
   {
     src:"images/milkyway.jpg", obj:"Milky Way",
     gear:"Seestar S50",
@@ -339,18 +340,28 @@ const PHOTOS = [
     note:"", layout:"wide"
   },
   {
-    layout:"compare",
-    title:"Orion Nebula",
-    left:  { src:"images/orion-first.png", obj:"Orion Nebula · M42", scope:"Celestron Omni AZ 102", date:"2/4/2024" },
-    right: { src:"images/orion-recent.PNG", obj:"Orion Nebula · M42", scope:"Seestar S50", date:"10/6/2026" },
-    text:"The Orion Nebula, also known as Messier 42 (M42), is a vast cloud of gas and dust located about 1,300 light-years away. It is one of the closest major star-forming regions to Earth, where new stars are born. It can be seen with the naked eye as a fuzzy patch in the constellation Orion."
-  },
-  {
     src:"images/Triangulum_galaxy (M 33))_10_7_2026.jpg", obj:"Triangulum Galaxy",
     gear:"Seestar S50",
     text:"The Triangulum Galaxy, also called Messier 33 (M33), is a spiral galaxy approximately 2.7 million light-years from Earth. It is a member of the Local Group of galaxies, which also includes the Milky Way and Andromeda. Its loose spiral arms contain glowing nebulae and regions where new stars are forming.",
     date: "10/7/2026",
-    note:"", layout:"wide"
+    note:"", layout:"duo"
+  },
+  {
+    src:"images/Whirlpool_Galaxy (NGC 5194)_7_19_2026.PNG", obj:"Whirlpool Galaxy",
+    gear:"Seestar 530",
+    text:"The Whirlpool Galaxy, also known as Messier 51 (M51), is a spiral galaxy located approximately 23 to 31 million light-years away in the constellation Canes Venatici. Its spiral arms are interacting gravitationally with a smaller companion galaxy. This interaction helps compress gas and encourages the formation of new stars.",
+    date:"7/19/2026",
+    note:"", layout:"duo"
+  },
+
+  /* ===== STAR CLUSTERS ===== */
+  {
+    section:{eyebrow:"Gatherings of stars", title:"Star Clusters"},
+    src:"images/hercules-m13.jpg", obj:"Hercules Globular Cluster · M13",
+    gear:"Seestar S50",
+    text:"The Hercules Globular Cluster (Messier 13) is a dense sphere of several hundred thousand stars about 22,000 light-years away, measuring roughly 145 light-years across. At 11.5 to 13 billion years old, it is nearly as old as the universe. Edmond Halley discovered it in 1714, and it can be glimpsed with the naked eye under dark skies.",
+    date: "7/13/2026",
+    note:"", layout:"duo"
   },
   {
     src:"images/Pleiades (M45)_8_14_2026.jpg", obj:"Pleiades Cluster",
@@ -359,11 +370,21 @@ const PHOTOS = [
     date:"8/14/2026",
     note:"", layout:"duo"
   },
+
+  /* ===== NEBULAE ===== */
   {
-    src:"images/Saturn_video_10_6_2021.mp4", obj:"Saturn",
-    gear:"Celestron Omni AZ 102",
-    text:"Saturn is the sixth planet from the Sun and is famous for its spectacular rings made primarily of ice, rocky debris, and dust. It is a gas giant composed mostly of hydrogen and helium, with no solid surface like Earth's. Saturn has many moons, including Titan, which has lakes and rivers of liquid hydrocarbons on its surface.",
-    date:"10/6/2021",
+    section:{eyebrow:"Clouds of gas and dust", title:"Nebulae"},
+    layout:"compare",
+    title:"Orion Nebula",
+    left:  { src:"images/orion-first.png", obj:"Orion Nebula · M42", scope:"Celestron Omni AZ 102", date:"2/4/2024" },
+    right: { src:"images/orion-recent.PNG", obj:"Orion Nebula · M42", scope:"Seestar S50", date:"10/6/2026" },
+    text:"The Orion Nebula, also known as Messier 42 (M42), is a vast cloud of gas and dust located about 1,300 light-years away. It is one of the closest major star-forming regions to Earth, where new stars are born. It can be seen with the naked eye as a fuzzy patch in the constellation Orion."
+  },
+  {
+    src:"images/Bubble_nebula.PNG", obj:"Bubble Nebula",
+    gear:"Seestar S50",
+    text:"The Bubble Nebula, or NGC 7635, is an emission nebula located in the constellation Cassiopeia. Its bubble shape was created by the powerful stellar wind of a hot, massive star pushing surrounding gas outward. It is approximately 7,000 to 11,000 light-years away from Earth.",
+    date:"10/10/2026",
     note:"", layout:"duo"
   },
   {
@@ -371,78 +392,85 @@ const PHOTOS = [
     gear:"Seestar S50",
     text:"The Crescent Nebula, also known as NGC 6888, is an emission nebula located in the constellation Cygnus. It formed as powerful stellar winds from a massive star collided with gas that the star had previously expelled. The resulting glowing shell of gas creates its distinctive crescent-like appearance.",
     date:"9/11/2026",
-    note:"", layout:"wide"
+    note:"", layout:"duo"
   },
   {
-    src:"images/north-america-nebula.jpg", obj:"North America Nebula · NGC 7000",
-    gear:"Seestar S50",
-    text:"The North America Nebula (NGC 7000) is an emission nebula in Cygnus, about 2,590 light-years away, named for its resemblance to the continent. A massive region of ionized hydrogen, it glows red as light from hidden stars energizes the gas, spanning several times the width of the full moon.",
-    date: "7/14/2026",
-    note:"", layout:"tall"
-  },
-   {
-    src:"images/Whirlpool_Galaxy (NGC 5194)_7_19_2026.PNG", obj:"Whirlpool Galaxy",
-    gear:"Seestar 530",
-    text:"The Whirlpool Galaxy, also known as Messier 51 (M51), is a spiral galaxy located approximately 23 to 31 million light-years away in the constellation Canes Venatici. Its spiral arms are interacting gravitationally with a smaller companion galaxy. This interaction helps compress gas and encourages the formation of new stars.",
-    date:"7/19/2026",
-    note:"", layout:"duo"
-  },
-   {
-    src:"images/East_Veil Nebula (C33)_07_14_2026.jpg", obj:"East Veil Nebula",
-    gear:"Seestar 530",
-    text:"The East Veil Nebula, also called NGC 6992, is part of the Veil Nebula complex in the constellation Cygnus. It is the remnant of a massive star that exploded as a supernova thousands of years ago. The colorful filaments are created as the expanding shock wave heats and ionizes gas in the surrounding space.",
-    date:"7/14/2026",
-    note:"", layout:"duo"
-  },
-   {
-    src:"images/Full_Moon_09_10_2022.jpg", obj:"Full Moon",
-    gear:"Celestron Omni AZ 102",
-    text:"A full Moon occurs when the side of the Moon facing Earth is almost entirely illuminated by the Sun. This phase happens approximately once every 29.5 days as the Moon orbits Earth. The bright lunar surface reveals features such as craters, mountains, and dark volcanic plains called maria.",
-    date:"9/10/2022",
-    note:"", layout:"tall"
-  },
-   {
     src:"images/Wizard_Nebula (NGC 7380)_07_20_2026.PNG", obj:"Wizard Nebula",
     gear:"Seestar 530",
     text:"The Wizard Nebula, also known as NGC 7380, is an emission nebula located in the constellation Cepheus. Its clouds of gas and dust form a shape that some observers imagine resembles a wizard wearing a pointed hat. It surrounds a young star cluster whose energetic stars illuminate the gas and help create new generations of stars.",
     date:"7/20/2026",
     note:"", layout:"duo"
   },
-   {
-    src:"images/Jupiter_video_10_10_2022.mp4", obj:"Jupiter",
-    gear:"Celestron Omni AZ 102",
-    text:"Jupiter is the largest planet in our Solar System and the fifth planet from the Sun. Its atmosphere contains colorful cloud bands and the Great Red Spot, a giant storm that has persisted for centuries. Jupiter also has many moons, including Europa, which may contain a liquid ocean beneath its icy surface.",
-    date:"10/6/2021",
-    note:"", layout:"duo"
-  },
-   {
-    src:"images/shootingstar.png", obj:"Shooting Star",
-    gear:"iPhone 14 Pro",
-    text:"The Perseid meteor shower is one of the brightest and most popular annual meteor showers, appearing every summer in July and August. In 2026, it peaked on the night of August 12–13, when Earth passed through debris left behind by Comet Swift–Tuttle, creating brilliant streaks of light across the night sky. With a nearly moonless sky providing excellent viewing conditions, observers had the chance to spot dozens of shooting stars and occasional spectacular fireballs.",
-    date:"10/19/2024",
-    note:"", layout:"tall"
-  },
-   {
+  {
     src:"images/Pacman_Nebula (NGC 281)_07_14_2026.jpg", obj:"Pacman Nebula",
     gear:"Seestar 530",
     text:"The Pacman Nebula, also known as NGC 281, is an emission nebula located in the constellation Cassiopeia. Its shape resembles the classic video game character Pac-Man, giving the nebula its nickname. The region contains young stars, dense clouds of gas, and pillars of dust where star formation can occur.",
     date:"7/14/2026",
     note:"", layout:"duo"
   },
-   {
-    src:"images/Near_Total_Eclipse_04_08_2024.mp4", obj:"Solar Eclipse",
+  {
+    src:"images/North_America_Nebula (NGC 7000)_07_14_2026.jpg", obj:"North America Nebula · NGC 7000",
+    gear:"Seestar S50",
+    text:"The North America Nebula (NGC 7000) is an emission nebula in Cygnus, about 2,590 light-years away, named for its resemblance to the continent. A massive region of ionized hydrogen, it glows red as light from hidden stars energizes the gas, spanning several times the width of the full moon.",
+    date: "7/14/2026",
+    note:"", layout:"duo"
+  },
+  {
+    src:"images/East_Veil Nebula (C33)_07_14_2026.jpg", obj:"East Veil Nebula",
+    gear:"Seestar 530",
+    text:"The East Veil Nebula, also called NGC 6992, is part of the Veil Nebula complex in the constellation Cygnus. It is the remnant of a massive star that exploded as a supernova thousands of years ago. The colorful filaments are created as the expanding shock wave heats and ionizes gas in the surrounding space.",
+    date:"7/14/2026",
+    note:"", layout:"duo"
+  },
+
+  /* ===== PLANETS, MOON & ECLIPSE ===== */
+  {
+    section:{eyebrow:"Our Solar System", title:"Planets, Moon & Eclipse"},
+    src:"images/Saturn_video_10_6_2021.mp4", obj:"Saturn",
     gear:"Celestron Omni AZ 102",
-    text:"A solar eclipse occurs when the Moon passes between Earth and the Sun, blocking some or all of the Sun's light from certain locations. During a total solar eclipse, the Moon completely covers the Sun's bright disk, revealing the Sun's outer atmosphere, called the corona. Solar eclipses do not happen every month because the Moon's orbit is tilted relative to Earth's orbit around the Sun.",
+    text:"Saturn is the sixth planet from the Sun and is famous for its spectacular rings made primarily of ice, rocky debris, and dust. It is a gas giant composed mostly of hydrogen and helium, with no solid surface like Earth's. Saturn has many moons, including Titan, which has lakes and rivers of liquid hydrocarbons on its surface.",
     date:"10/6/2021",
     note:"", layout:"duo"
   },
-   {
+  {
+    src:"images/Jupiter_video_10_10_2022.mp4", obj:"Jupiter",
+    gear:"Celestron Omni AZ 102",
+    text:"Jupiter is the largest planet in our Solar System and the fifth planet from the Sun. Its atmosphere contains colorful cloud bands and the Great Red Spot, a giant storm that has persisted for centuries. Jupiter also has many moons, including Europa, which may contain a liquid ocean beneath its icy surface.",
+    date:"10/6/2021",
+    note:"", layout:"duo"
+  },
+  {
+    src:"images/Full_Moon_09_10_2022.jpg", obj:"Full Moon",
+    gear:"Celestron Omni AZ 102",
+    text:"A full Moon occurs when the side of the Moon facing Earth is almost entirely illuminated by the Sun. This phase happens approximately once every 29.5 days as the Moon orbits Earth. The bright lunar surface reveals features such as craters, mountains, and dark volcanic plains called maria.",
+    date:"9/10/2022",
+    note:"", layout:"duo"
+  },
+  {
+    src:"images/Near_Total_Eclipse_04_08_2024.mp4", obj:"Solar Eclipse",
+    gear:"Celestron Omni AZ 102",
+    text:"A solar eclipse occurs when the Moon passes between Earth and the Sun, blocking some or all of the Sun's light from certain locations. During a total solar eclipse, the Moon completely covers the Sun's bright disk, revealing the Sun's outer atmosphere, called the corona. Solar eclipses do not happen every month because the Moon's orbit is tilted relative to Earth's orbit around the Sun.",
+    date:"4/8/2024",
+    note:"", layout:"duo"
+  },
+
+  /* ===== SKY IMAGES ===== */
+  {
+    section:{eyebrow:"The wider sky", title:"Sky Images"},
+    src:"images/shootingstar.png", obj:"Shooting Star",
+    gear:"iPhone 14 Pro",
+    text:"The Perseid meteor shower is one of the brightest and most popular annual meteor showers, appearing every summer in July and August. In 2026, it peaked on the night of August 12–13, when Earth passed through debris left behind by Comet Swift–Tuttle, creating brilliant streaks of light across the night sky. With a nearly moonless sky providing excellent viewing conditions, observers had the chance to spot dozens of shooting stars and occasional spectacular fireballs.",
+    date:"8/12/2026",
+    note:"", layout:"duo"
+  },
+  {
     src:"images/Comet Tsuchinshan-ATLAS 10_19_2024_2.jpg", obj:"Comet Tsuchinshan-ATLAS",
     gear:"iPhone 14 Pro",
-    text:"The comet’s official name is C/2023 A3 (Tsuchinshan–ATLAS), and it was discovered independently by China’s Purple Mountain Observatory and the ATLAS survey in South Africa in 2023. As it approached the Sun, its icy nucleus released gas and dust, creating a glowing head and long tails that became visible to observers on Earth in 2024. The comet likely originated in the distant Oort Cloud, and its current trajectory suggests it may be leaving the Solar System rather than returning on a regular orbit. Comet Tsuchinshan–ATLAS returned to our skies in 2024, offering a spectacular display as it passed near the Sun and became visible to observers across Earth.",
+    text:"The comet’s official name is C/2023 A3 (Tsuchinshan–ATLAS), and it was discovered independently by China’s Purple Mountain Observatory and the ATLAS survey in South Africa in 2023. As it approached the Sun, its icy nucleus released gas and dust, creating a glowing head and long tails that became visible to observers on Earth in 2024. The comet likely originated in the distant Oort Cloud, and its current trajectory suggests it may be leaving the Solar System rather than returning on a regular orbit.",
     date:"10/19/2024",
-    note:"", layout:"tall"
-  }
+    note:"", layout:"duo"
+  },
+
 ];
 
 /* ============================================================
@@ -497,6 +525,11 @@ function compareItemHTML(side,i,ph){
 let html='', i=0;
 while(i<PHOTOS.length){
   const p=PHOTOS[i];
+  // section heading: printed whenever a photo declares one
+  if(p.section){
+    html+=`<div class="section-head"><span class="eyebrow">${p.section.eyebrow||''}</span>`+
+          `<h2>${p.section.title||''}</h2></div>`;
+  }
   if(p.layout==='compare'){
     html+=`<div class="plate compare">`+
       (p.title ? `<h2 class="compare-title">${p.title}</h2>` : ``)+
