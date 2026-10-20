@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Astronomer — Claire Lee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0d12; --bg-soft:#12151c; --line:#1e222c;
@@ -20,7 +23,7 @@ img{display:block;max-width:100%;}
 /* top nav — back to gallery */
 .topnav{
   position:relative;z-index:2;
-  max-width:900px;margin:0 auto;padding:2rem 2rem 0;
+  max-width:960px;margin:0 auto;padding:2rem 2rem 0;
 }
 .topnav a{
   color:var(--muted);text-decoration:none;font-size:.82rem;
@@ -35,45 +38,79 @@ img{display:block;max-width:100%;}
   padding:4rem 2rem 3rem;margin:0 auto;
 }
 #stars{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-.hero > *:not(#stars){position:relative;z-index:1;max-width:900px;width:100%;margin-left:auto;margin-right:auto;}
+.hero > *:not(#stars){position:relative;z-index:1;max-width:960px;width:100%;margin-left:auto;margin-right:auto;}
 .hero .eyebrow{color:var(--data);font-size:.9rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:1.2rem;
   opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .15s forwards;}
-.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,6vw,4rem);color:var(--ink);line-height:1.05;
+.hero h1{font-family:'Orbitron',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--ink);line-height:1.1;
   opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .35s forwards;}
 @keyframes heroIn{to{opacity:1;transform:none;}}
 
-/* body content */
-.content{max-width:720px;margin:0 auto;padding:2rem 2rem 6rem;}
-.content .lead{
-  font-family:var(--serif);font-size:1.3rem;color:var(--ink);
-  line-height:1.6;margin-bottom:2.5rem;
-}
+/* ---------- shared content wrapper ---------- */
+.content{max-width:960px;margin:0 auto;padding:3rem 2rem;}
 .content h2{
-  font-family:var(--serif);font-weight:400;color:var(--ink);
-  font-size:1.5rem;margin:2.5rem 0 1rem;
+  font-family:'Orbitron',Georgia,serif;font-weight:500;color:var(--ink);
+  font-size:clamp(1.3rem,2.6vw,1.8rem);letter-spacing:.01em;margin:0 0 1.4rem;
 }
-.content p{margin-bottom:1.4rem;font-size:1.05rem;}
-.content .portrait{
-  width:100%;border-radius:10px;margin:2rem 0;background:var(--bg-soft);
-  aspect-ratio:3/2;object-fit:cover;
-}
+.content p{margin-bottom:1.4rem;font-size:1.05rem;font-family:var(--serif);color:var(--body);line-height:1.75;}
+.content p:last-child{margin-bottom:0;}
 .placeholder-note{
   color:var(--data);font-style:italic;font-family:var(--serif);
-  border-left:2px solid var(--data);padding-left:1rem;margin:1.4rem 0;opacity:.8;
+  border-left:2px solid var(--data);padding-left:1rem;margin:1.4rem 0;opacity:.8;font-size:.98rem;
 }
-.foot{max-width:720px;margin:0 auto;padding:2rem;border-top:1px solid var(--line);
-  text-align:center;color:var(--muted);font-size:.8rem;letter-spacing:.05em;}
-.foot a{color:var(--data);text-decoration:none;}
-.foot a:hover{color:var(--ink);}
 
-@media(max-width:600px){.hero{min-height:40vh;padding:3rem 1.4rem 2rem;}.content{padding:1.5rem 1.4rem 4rem;}}
-@media(prefers-reduced-motion:reduce){.hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}html{scroll-behavior:auto;}}
+/* ---------- 1. INTRO: image left, text right ---------- */
+.intro{
+  max-width:960px;margin:0 auto;padding:1rem 2rem 2rem;
+  display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;
+}
+.intro .portrait{
+  width:100%;aspect-ratio:4/5;border-radius:10px;
+  background:var(--bg-soft);object-fit:cover;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.intro .intro-text .eyebrow{
+  display:block;color:var(--data);font-size:.8rem;letter-spacing:.2em;
+  text-transform:uppercase;margin-bottom:1rem;font-family:var(--sans);
+}
+.intro .intro-text p{
+  font-family:var(--serif);font-size:1.15rem;color:var(--ink);
+  line-height:1.65;margin-bottom:1.2rem;
+}
+.intro .intro-text p:last-child{margin-bottom:0;}
+@media(max-width:720px){
+  .intro{grid-template-columns:1fr;gap:1.8rem;}
+  .intro .portrait{aspect-ratio:3/2;}
+}
 
-/* ---- moving carousel ---- */
+/* ---------- 2. three captioned image placeholders ---------- */
+.trio{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;
+  margin:2.5rem 0 1rem;
+}
+.trio figure{margin:0;}
+.trio .frame{
+  width:100%;aspect-ratio:1;border-radius:10px;
+  background:var(--bg-soft);object-fit:cover;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.trio figcaption{
+  margin-top:.8rem;color:var(--muted);font-family:var(--serif);
+  font-style:italic;font-size:.9rem;line-height:1.5;
+}
+@media(max-width:720px){
+  .trio{grid-template-columns:1fr;gap:2rem;}
+  .trio .frame{aspect-ratio:3/2;}
+}
+
+/* thin divider between major sections */
+.divider{max-width:960px;margin:1rem auto;padding:0 2rem;}
+.divider hr{border:none;border-top:1px solid var(--line);}
+
+/* ---------- moving carousel ---------- */
 .carousel-wrap{max-width:1100px;margin:3rem auto 0;padding:0 2rem;}
 .carousel-wrap h2{
-  font-family:var(--serif);font-weight:400;color:var(--ink);
-  font-size:1.5rem;margin-bottom:1.5rem;max-width:900px;
+  font-family:'Orbitron',Georgia,serif;font-weight:500;color:var(--ink);
+  font-size:clamp(1.3rem,2.6vw,1.8rem);margin-bottom:1.5rem;max-width:960px;
   margin-left:auto;margin-right:auto;
 }
 .carousel{overflow:hidden;position:relative;
@@ -88,8 +125,18 @@ img{display:block;max-width:100%;}
 }
 @keyframes scrollX{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 @media(max-width:600px){.carousel-track img{height:220px;}}
-@media(prefers-reduced-motion:reduce){.carousel-track{animation:none;}}
 
+.foot{max-width:960px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--line);
+  text-align:center;color:var(--muted);font-size:.8rem;letter-spacing:.05em;}
+.foot a{color:var(--data);text-decoration:none;}
+.foot a:hover{color:var(--ink);}
+
+@media(max-width:600px){.hero{min-height:40vh;padding:3rem 1.4rem 2rem;}.content,.intro{padding-left:1.4rem;padding-right:1.4rem;}}
+@media(prefers-reduced-motion:reduce){
+  .hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}
+  .carousel-track{animation:none;}
+  html{scroll-behavior:auto;}
+}
 </style>
 </head>
 <body>
@@ -103,28 +150,60 @@ img{display:block;max-width:100%;}
 </header>
 
 <!-- ============================================================
-     EDIT YOUR STORY HERE
-     Replace the placeholder text below with your own words.
+     1. INTRO — portrait on the left, text on the right
      ============================================================ -->
-<main class="content">
-  <p class="lead">A one- or two-sentence introduction goes here — who you are and what draws you to the night sky.</p>
+<section class="intro">
+  <img class="portrait" src="images/portrait.jpg" alt="Claire Lee"
+       onerror="this.style.background='var(--bg-soft)';this.alt='';">
+  <div class="intro-text">
+    <span class="eyebrow">Claire Lee</span>
+    <p>A one- or two-sentence introduction goes here — who you are and what first drew you to the night sky.</p>
+    <p>Add a second short paragraph if you like: where you shoot from, what you're studying, or what you hope to do with astronomy.</p>
+  </div>
+</section>
 
-  <p class="placeholder-note">This page is a template — replace the text with your own story. Delete these italic notes when you're done.</p>
-
+<!-- ============================================================
+     2. HOW I STARTED  + three captioned images
+     ============================================================ -->
+<section class="content">
   <h2>How I started</h2>
   <p>Write about how you first got into astronomy and astrophotography. What was the first thing you photographed? What hooked you?</p>
+  <p>Keep going for a paragraph or two — the first cold night, the first blurry galaxy, the moment it clicked.</p>
 
-  <!-- Optional portrait — put an image in images/ and set the src -->
-  <img class="portrait" src="" alt="" onerror="this.style.display='none'">
+  <!-- three image placeholders with captions -->
+  <div class="trio">
+    <figure>
+      <img class="frame" src="images/start-1.jpg" alt=""
+           onerror="this.style.background='var(--bg-soft)';">
+      <figcaption>Caption for the first photo goes here.</figcaption>
+    </figure>
+    <figure>
+      <img class="frame" src="images/start-2.jpg" alt=""
+           onerror="this.style.background='var(--bg-soft)';">
+      <figcaption>Caption for the second photo goes here.</figcaption>
+    </figure>
+    <figure>
+      <img class="frame" src="images/start-3.jpg" alt=""
+           onerror="this.style.background='var(--bg-soft)';">
+      <figcaption>Caption for the third photo goes here.</figcaption>
+    </figure>
+  </div>
+</section>
 
-  <h2>Why I keep looking up</h2>
-  <p>Write about what astrophotography means to you now — the patience, the cold nights, the connection between science and art. This is a great place to let your voice come through.</p>
+<div class="divider"><hr></div>
 
+<!-- ============================================================
+     3. BEYOND THE TELESCOPE
+     ============================================================ -->
+<section class="content">
   <h2>Beyond the telescope</h2>
   <p>A few sentences about the rest of your life — violin, poetry, research — and how they connect to the way you see the sky.</p>
-</main>
+  <p>Let your voice come through here: what astrophotography has taught you, or where you want it to take you next.</p>
+</section>
 
-<!-- ===== moving carousel ===== -->
+<!-- ============================================================
+     4. MOVING CAROUSEL
+     ============================================================ -->
 <section class="carousel-wrap">
   <h2>At the eyepiece</h2>
   <div class="carousel">
