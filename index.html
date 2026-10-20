@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Astrophotography Gallery — Claire Lee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    EDIT HERE: colors / fonts
@@ -59,7 +62,7 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
 }
 .hero-glow.on{opacity:1;}
 /* all hero text/badge sits above the starfield, constrained to a centered column */
-.hero > *:not(#stars):not(.hero-glow){position:relative;z-index:1;max-width:1100px;}
+.hero > *:not(#stars):not(.hero-glow){position:relative;z-index:1;max-width:1100px;margin-left:auto;margin-right:auto;text-align:center;}
 
 /* text fade-in on load: each line rises + fades, staggered */
 .hero .eyebrow,.hero h1,.hero .sub,.hero .byline{
@@ -100,16 +103,23 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   text-transform:uppercase;margin-bottom:1.4rem;
 }
 .hero h1{
-  font-family:var(--serif);font-weight:400;
-  font-size:clamp(1.4rem,6.2vw,5rem);
+  font-family:'Orbitron',Georgia,serif;font-weight:500;
+  /* Orbitron is wide; cap the size so the one-line title fits its container
+     and stays truly centered instead of overflowing to the right */
+  font-size:clamp(1.1rem,4.4vw,3.1rem);
   color:var(--ink);line-height:1.05;letter-spacing:-.01em;
   white-space:nowrap;      /* keep title on ONE line */
+  text-align:center;max-width:100%;
+  margin-left:auto;margin-right:auto;
 }
 .hero .sub{
-  font-family:var(--serif);font-style:italic;
+  font-family:var(--sans);              /* same family + treatment as the byline */
   font-size:clamp(.75rem,2.7vw,1.4rem);
-  color:var(--muted);margin-top:2.6rem;
+  letter-spacing:.18em;text-transform:uppercase;   /* match the byline */
+  color:rgba(255,255,255,.55);          /* white, fainter — like the "faint light" it references */
+  margin-top:2.6rem;
   white-space:nowrap;      /* keep subtitle on ONE line */
+  text-align:center;max-width:100%;margin-left:auto;margin-right:auto;
 }
 .hero .byline{
   margin-top:1.8rem;color:var(--data);font-size:1rem;
@@ -128,8 +138,8 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   font-family:var(--sans);
 }
 .section-head h2{
-  font-family:var(--serif);font-weight:400;color:var(--ink);
-  font-size:clamp(1.6rem,3.5vw,2.4rem);letter-spacing:.01em;
+  font-family:'Orbitron',Georgia,serif;font-weight:500;color:var(--ink);
+  font-size:clamp(1.4rem,3vw,2.1rem);letter-spacing:.01em;
   padding-bottom:1rem;margin-bottom:3.5rem;border-bottom:1px solid var(--line);
 }
 @media(max-width:720px){
@@ -197,7 +207,7 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   font-family:var(--serif);color:var(--body);
   font-size:1.05rem;line-height:1.7;
   text-align:left;                         /* full width, no early wrap */
-  margin-bottom:2.2rem;
+  margin-top:1.6rem;                       /* sits below the image pair */
 }
 .compare .pair{
   display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;
@@ -277,8 +287,8 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   <canvas id="stars" aria-hidden="true"></canvas>
   <div class="hero-glow" id="heroGlow" aria-hidden="true"></div>
 
-  <h1>The Astrophotography Gallery</h1>
-  <p class="sub">Several years of chasing faint light from a New England driveway.</p>
+  <h1 id="heroTitle">The Astrophotography Gallery</h1>
+  <p class="sub" id="heroSub">Several years of chasing faint light from a New England driveway.</p>
   <p class="byline">Astrophotography by Claire Lee</p>
   <div class="hero-actions">
     <a class="btn" href="astronomer.html">The Astronomer</a>
@@ -481,6 +491,32 @@ const PHOTOS = [
 const gallery = document.getElementById('gallery');
 document.getElementById('year').textContent = new Date().getFullYear();
 
+/* ---- match the title's width to the subtitle's width ----
+   Scales "The Astrophotography Gallery" so its left/right edges line up
+   exactly with "Several years ... driveway." on every screen size.      */
+(function(){
+  const title = document.getElementById('heroTitle');
+  const sub    = document.getElementById('heroSub');
+  if(!title || !sub) return;
+
+  function fitTitle(){
+    // reset to the CSS size first, then measure both natural widths
+    title.style.fontSize = '';
+    const subW   = sub.getBoundingClientRect().width;
+    const titleW = title.getBoundingClientRect().width;
+    if(titleW === 0 || subW === 0) return;
+    const current = parseFloat(getComputedStyle(title).fontSize);
+    // scale so the title's width equals the subtitle's width
+    title.style.fontSize = (current * (subW / titleW)) + 'px';
+  }
+
+  window.addEventListener('resize', fitTitle);
+  window.addEventListener('load', fitTitle);
+  // re-run once the Orbitron webfont has actually loaded (it loads async)
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(fitTitle); }
+  fitTitle();
+})();
+
 /* placeholder gradients shown when a photo has no src yet */
 const PLACEHOLDER = [
   'radial-gradient(circle at 40% 38%,#c97b4a,#7a3a1f 32%,#14100c 78%)',
@@ -535,12 +571,11 @@ while(i<PHOTOS.length){
   }
   if(p.layout==='compare'){
     html+=`<div class="plate compare">`+
-      (p.title ? `<h2 class="compare-title">${p.title}</h2>` : ``)+
-      `<p class="shared-cap">${p.text||''}</p>`+
       `<div class="pair">`+
         compareItemHTML(p.left, i, i)+
         compareItemHTML(p.right, i, i+1)+
       `</div>`+
+      `<p class="shared-cap">${p.text||''}</p>`+
       `</div>`;
     i++;
   }else if(p.layout==='duo' && PHOTOS[i+1] && PHOTOS[i+1].layout==='duo'){
