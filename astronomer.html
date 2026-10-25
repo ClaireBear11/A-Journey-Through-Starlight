@@ -35,10 +35,12 @@ img{display:block;max-width:100%;}
 .hero{
   position:relative;overflow:hidden;
   min-height:48vh;display:flex;flex-direction:column;justify-content:center;
-  padding:4rem 2rem 3rem;margin:0 auto;
+  padding:4rem 0 3rem;margin:0 auto;   /* vertical padding only; children carry the 2rem side padding */
 }
 #stars{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-.hero > *:not(#stars){position:relative;z-index:1;max-width:960px;width:100%;margin-left:auto;margin-right:auto;}
+/* same wrapper model as .intro / .content, so the hero text's left edge
+   lines up exactly with the intro image's left edge */
+.hero > *:not(#stars){position:relative;z-index:1;max-width:960px;width:100%;margin-left:auto;margin-right:auto;padding-left:2rem;padding-right:2rem;}
 .hero .eyebrow{color:var(--data);font-size:.9rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:1.2rem;
   opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .15s forwards;}
 .hero h1{font-family:'Orbitron',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--ink);line-height:1.1;
@@ -134,7 +136,11 @@ img{display:block;max-width:100%;}
 .foot a{color:var(--data);text-decoration:none;}
 .foot a:hover{color:var(--ink);}
 
-@media(max-width:600px){.hero{min-height:40vh;padding:3rem 1.4rem 2rem;}.content,.intro{padding-left:1.4rem;padding-right:1.4rem;}}
+@media(max-width:600px){
+  .hero{min-height:40vh;padding:3rem 0 2rem;}
+  .hero > *:not(#stars){padding-left:1.4rem;padding-right:1.4rem;}
+  .content,.intro{padding-left:1.4rem;padding-right:1.4rem;}
+}
 @media(prefers-reduced-motion:reduce){
   .hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}
   .carousel-track{animation:none;}
