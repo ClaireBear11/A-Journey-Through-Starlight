@@ -20,35 +20,14 @@ html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--body);font-family:var(--sans);line-height:1.7;-webkit-font-smoothing:antialiased;}
 img{display:block;max-width:100%;}
 
-.topnav{position:absolute;top:0;left:0;right:0;z-index:5;max-width:900px;margin:0 auto;padding:2rem 2rem 0;}
-/* match the index hero buttons */
-.topnav a{
-  display:inline-flex;align-items:center;
-  padding:.7rem 1.5rem;
-  font-family:var(--sans);font-size:.85rem;letter-spacing:.14em;
-  text-transform:uppercase;text-decoration:none;
-  color:var(--data);
-  border:1px solid var(--data);border-radius:2px;
-  background:transparent;cursor:pointer;
-  transition:background .35s ease,color .35s ease,box-shadow .35s ease;
-}
-.topnav a:hover,.topnav a:focus-visible{
-  background:rgba(154,140,106,.14);
-  color:var(--ink);
-  box-shadow:0 0 22px rgba(154,140,106,.22);
-  outline:none;
-}
+.topnav{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:2rem 2rem 0;}
+.topnav a{color:var(--muted);text-decoration:none;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;transition:color .3s;}
+.topnav a:hover{color:var(--ink);}
 
 .hero{position:relative;overflow:hidden;min-height:48vh;display:flex;flex-direction:column;justify-content:center;padding:4rem 0 3rem;margin:0 auto;}
-#stars{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
-/* YOUR Milky Way photo — Ken Burns drift */
-.hero-bg{position:absolute;inset:-6%;z-index:0;pointer-events:none;background-image:url("images/milkyway-hero.jpg");background-size:cover;background-position:center center;will-change:transform;animation:kenburns 30s ease-in-out infinite alternate;}
-@keyframes kenburns{0%{transform:scale(1.08) translate(-3.5%,2.2%);}100%{transform:scale(1.22) translate(3.5%,-2.2%);}}
-.hero-shimmer{position:absolute;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(120,140,180,.16), transparent 70%);animation:shimmer 6s ease-in-out infinite;}
-@keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.85;}}
-.hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center, rgba(6,8,14,0) 45%, rgba(6,8,14,.45) 100%),linear-gradient(to bottom, rgba(6,8,14,.35) 0%, rgba(6,8,14,.05) 35%, rgba(6,8,14,.05) 65%, rgba(6,8,14,.55) 100%);}
+#stars{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 /* children carry the 2rem side padding so the hero titles line up with the telescope cards below */
-.hero > *:not(#stars):not(.hero-bg):not(.hero-shimmer){position:relative;z-index:2;max-width:900px;width:100%;margin-left:auto;margin-right:auto;padding-left:2rem;padding-right:2rem;}
+.hero > *:not(#stars){position:relative;z-index:1;max-width:900px;width:100%;margin-left:auto;margin-right:auto;padding-left:2rem;padding-right:2rem;}
 .hero .eyebrow{color:var(--data);font-size:.9rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:1.2rem;
   opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .15s forwards;}
 .hero h1{font-family:'Orbitron',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--ink);line-height:1.1;
@@ -73,7 +52,7 @@ img{display:block;max-width:100%;}
 .foot a:hover{color:var(--ink);}
 
 @media(max-width:600px){.hero{min-height:40vh;padding:3rem 0 2rem;}.hero > *:not(#stars){padding-left:1.4rem;padding-right:1.4rem;}.content{padding:1.5rem 1.4rem 4rem;}}
-@media(prefers-reduced-motion:reduce){.hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}.hero-bg,.hero-shimmer{animation:none;}html{scroll-behavior:auto;}}
+@media(prefers-reduced-motion:reduce){.hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}html{scroll-behavior:auto;}}
 /* ---- two telescope cards ---- */
 .scopes{
   max-width:900px;margin:0 auto;padding:1rem 2rem 2rem;
@@ -136,8 +115,6 @@ img{display:block;max-width:100%;}
 <nav class="topnav"><a href="index.html">&#8249; Back to the Gallery</a></nav>
 
 <header class="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-shimmer" aria-hidden="true"></div>
   <canvas id="stars" aria-hidden="true"></canvas>
   <p class="eyebrow">The Telescope</p>
   <h1>My Setup</h1>
@@ -207,39 +184,46 @@ img{display:block;max-width:100%;}
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
 (function(){
-  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const hero=document.querySelector('.hero');const bg=document.querySelector('.hero-bg');
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   const canvas=document.getElementById('stars'); if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const STAR_DENSITY=0.00022,DRIFT_X=0.10,DRIFT_Y=0.035,TWINKLE=1.0,PARALLAX=30,EASE=0.07,BRIGHT_FRACTION=0.09;
-  const COLORS=[[202,225,255],[230,240,255],[255,255,255],[255,245,230],[255,225,185],[255,200,160]];
-  const CW=[0.12,0.18,0.28,0.22,0.13,0.07];
-  function pick(){let r=Math.random(),a=0;for(let i=0;i<COLORS.length;i++){a+=CW[i];if(r<=a)return COLORS[i];}return COLORS[2];}
-  const LAYERS=[{depth:0.4,size:0.7,bright:0.6,tw:0.7,dr:0.6},{depth:0.8,size:1.0,bright:0.85,tw:1.2,dr:1.0},{depth:1.3,size:1.4,bright:1.05,tw:1.7,dr:1.3}];
-  let W,H,stars=[];const dpr=Math.min(window.devicePixelRatio||1,2);let mx=0,my=0,tx=0,ty=0;
-  function resize(){W=hero.clientWidth;H=hero.clientHeight;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
-    const n=Math.round(W*H*STAR_DENSITY);stars=[];
-    for(let i=0;i<n;i++){const L=LAYERS[i%LAYERS.length];const br=Math.random()<BRIGHT_FRACTION;
-      stars.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.0+0.3)*L.size*(br?2:1),base:(Math.random()*0.5+0.3)*L.bright*(br?1.3:1),phase:Math.random()*Math.PI*2,speed:(Math.random()*0.8+0.4)*L.tw,col:pick(),br,L});}}
-  hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();tx=((e.clientX-r.left)/r.width-0.5)*2;ty=((e.clientY-r.top)/r.height-0.5)*2;});
-  hero.addEventListener('pointerleave',()=>{tx=0;ty=0;});
-  function star(s,x,y,a){const[r,g,b]=s.col;const rad=s.r*(s.br?3:2.2);
-    const grd=ctx.createRadialGradient(x,y,0,x,y,rad);
-    grd.addColorStop(0,`rgba(${r},${g},${b},${a})`);grd.addColorStop(0.3,`rgba(${r},${g},${b},${a*0.45})`);grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
-    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle=`rgba(${r},${g},${b},${Math.min(1,a*1.05)})`;ctx.beginPath();ctx.arc(x,y,s.r*0.55,0,Math.PI*2);ctx.fill();}
+  const ctx=canvas.getContext('2d'), hero=document.querySelector('.hero');
+  const DENSITY=0.00022, DX=0.10, DY=0.03, TW=0.5;
+  const SHOOT_MIN=6000, SHOOT_MAX=14000;   // ms between shooting stars (same as index)
+  let W,H,stars=[],shooters=[]; const dpr=Math.min(window.devicePixelRatio||1,2);
+  function resize(){
+    W=hero.clientWidth;H=hero.clientHeight;
+    canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n=Math.round(W*H*DENSITY);stars=[];
+    for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.3,base:Math.random()*0.5+0.35,phase:Math.random()*Math.PI*2,speed:Math.random()*0.8+0.4});
+  }
+  function spawnShooter(){
+    const ang=Math.PI/5+Math.random()*0.25, speed=6+Math.random()*3;
+    shooters.push({x:Math.random()*W*0.6,y:Math.random()*H*0.4,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed,life:0,max:60+Math.random()*30,len:120+Math.random()*80});
+    setTimeout(spawnShooter, SHOOT_MIN+Math.random()*(SHOOT_MAX-SHOOT_MIN));
+  }
   let t=0;
-  function frame(){t++;mx+=(tx-mx)*EASE;my+=(ty-my)*EASE;
-    if(bg) bg.style.marginLeft=(-mx*20)+'px', bg.style.marginTop=(-my*20)+'px';
-    ctx.clearRect(0,0,W,H);
-    for(const s of stars){s.x+=DRIFT_X*s.L.depth*s.L.dr;s.y+=DRIFT_Y*s.L.depth*s.L.dr;
-      if(s.x>W+20)s.x=-20;if(s.x<-20)s.x=W+20;if(s.y>H+20)s.y=-20;
-      const ox=-mx*PARALLAX*s.L.depth,oy=-my*PARALLAX*s.L.depth;
-      const tw=s.base+Math.sin(t*0.02*s.speed+s.phase)*TWINKLE*0.4*s.L.tw;
-      star(s,s.x+ox,s.y+oy,Math.max(0,Math.min(1,tw)));}
-    requestAnimationFrame(frame);}
-  resize();window.addEventListener('resize',resize);
-  if(!reduce) requestAnimationFrame(frame); else for(const s of stars) star(s,s.x,s.y,s.base);
+  function frame(){
+    t++;ctx.clearRect(0,0,W,H);
+    for(const s of stars){
+      s.x+=DX;s.y+=DY;if(s.x>W)s.x=0;if(s.y>H)s.y=0;
+      const a=Math.max(0,Math.min(1,s.base+Math.sin(t*0.02*s.speed+s.phase)*TW*0.35));
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(235,238,245,${a})`;ctx.fill();
+    }
+    /* shooting stars (ported from the index hero) */
+    for(let i=shooters.length-1;i>=0;i--){
+      const m=shooters[i];m.x+=m.vx;m.y+=m.vy;m.life++;
+      const fade=1-m.life/m.max;
+      if(fade<=0||m.x>W+100||m.y>H+100){shooters.splice(i,1);continue;}
+      const tailX=m.x-m.vx*(m.len/6), tailY=m.y-m.vy*(m.len/6);
+      const grad=ctx.createLinearGradient(m.x,m.y,tailX,tailY);
+      grad.addColorStop(0,`rgba(255,250,240,${fade})`);grad.addColorStop(1,`rgba(255,250,240,0)`);
+      ctx.strokeStyle=grad;ctx.lineWidth=1.6;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(m.x,m.y);ctx.lineTo(tailX,tailY);ctx.stroke();
+    }
+    requestAnimationFrame(frame);
+  }
+  resize();window.addEventListener('resize',resize);requestAnimationFrame(frame);
+  setTimeout(spawnShooter, 2500);
 })();
 </script>
 </body>
