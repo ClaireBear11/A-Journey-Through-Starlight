@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Telescope — Claire Lee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0d12; --bg-soft:#12151c; --line:#1e222c;
@@ -21,12 +24,13 @@ img{display:block;max-width:100%;}
 .topnav a{color:var(--muted);text-decoration:none;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;transition:color .3s;}
 .topnav a:hover{color:var(--ink);}
 
-.hero{position:relative;overflow:hidden;min-height:48vh;display:flex;flex-direction:column;justify-content:center;padding:4rem 2rem 3rem;margin:0 auto;}
+.hero{position:relative;overflow:hidden;min-height:48vh;display:flex;flex-direction:column;justify-content:center;padding:4rem 0 3rem;margin:0 auto;}
 #stars{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-.hero > *:not(#stars){position:relative;z-index:1;max-width:900px;width:100%;margin-left:auto;margin-right:auto;}
+/* children carry the 2rem side padding so the hero titles line up with the telescope cards below */
+.hero > *:not(#stars){position:relative;z-index:1;max-width:900px;width:100%;margin-left:auto;margin-right:auto;padding-left:2rem;padding-right:2rem;}
 .hero .eyebrow{color:var(--data);font-size:.9rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:1.2rem;
   opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .15s forwards;}
-.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,6vw,4rem);color:var(--ink);line-height:1.05;
+.hero h1{font-family:'Orbitron',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--ink);line-height:1.1;
   opacity:0;transform:translateY(18px);animation:heroIn .9s cubic-bezier(.2,.6,.2,1) .35s forwards;}
 @keyframes heroIn{to{opacity:1;transform:none;}}
 
@@ -47,7 +51,7 @@ img{display:block;max-width:100%;}
 .foot a{color:var(--data);text-decoration:none;}
 .foot a:hover{color:var(--ink);}
 
-@media(max-width:600px){.hero{min-height:40vh;padding:3rem 1.4rem 2rem;}.content{padding:1.5rem 1.4rem 4rem;}}
+@media(max-width:600px){.hero{min-height:40vh;padding:3rem 0 2rem;}.hero > *:not(#stars){padding-left:1.4rem;padding-right:1.4rem;}.content{padding:1.5rem 1.4rem 4rem;}}
 @media(prefers-reduced-motion:reduce){.hero .eyebrow,.hero h1{opacity:1 !important;transform:none !important;animation:none;}html{scroll-behavior:auto;}}
 /* ---- two telescope cards ---- */
 .scopes{
@@ -60,8 +64,8 @@ img{display:block;max-width:100%;}
 }
 .scope-card .frame img{width:100%;height:100%;object-fit:cover;}
 .scope-card h3{
-  font-family:var(--serif);font-weight:400;color:var(--ink);
-  font-size:1.35rem;margin:1.2rem 0 .8rem;
+  font-family:'Orbitron',Georgia,serif;font-weight:500;color:var(--ink);
+  font-size:1.25rem;letter-spacing:.01em;margin:1.2rem 0 .8rem;
 }
 .scope-card .row{
   display:flex;justify-content:space-between;gap:1rem;
@@ -82,9 +86,14 @@ img{display:block;max-width:100%;}
 /* ---- moving carousel ---- */
 .carousel-wrap{max-width:1100px;margin:3rem auto 0;padding:0 2rem;}
 .carousel-wrap h2{
-  font-family:var(--serif);font-weight:400;color:var(--ink);
-  font-size:1.5rem;margin-bottom:1.5rem;max-width:900px;
+  font-family:'Orbitron',Georgia,serif;font-weight:500;color:var(--ink);
+  font-size:clamp(1.3rem,2.6vw,1.8rem);letter-spacing:.01em;margin-bottom:1rem;max-width:900px;
   margin-left:auto;margin-right:auto;
+}
+/* intro caption above the carousel — matches the astronomer page body text */
+.carousel-wrap .carousel-intro{
+  font-family:var(--serif);font-size:1.05rem;color:var(--body);line-height:1.75;
+  max-width:900px;margin:0 auto 1.8rem;
 }
 .carousel{overflow:hidden;position:relative;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
@@ -148,6 +157,7 @@ img{display:block;max-width:100%;}
   <!-- ===== moving carousel ===== -->
   <section class="carousel-wrap">
     <h2>My first self-made telescopes!</h2>
+    <p class="carousel-intro">Before I got the Celestron Omni AZ 102 and the Seestar S50, I made my own telescopes using boxes, pipes, tape, and glass lenses in elementary school! The images below show the four telescopes I created and decorated with my Dad.</p>
     <div class="carousel">
       <div class="carousel-track">
         <!-- Your photos. List each one ONCE, then paste the SAME set again
