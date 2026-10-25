@@ -43,12 +43,39 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   text-align:center;
   padding:6rem 2rem 4rem;
   margin:0 auto;
-  overflow:hidden;              /* keep the starfield + shooting stars inside */
+  overflow:hidden;              /* keep the starfield + photo motion inside */
+  background-color:#05060a;
 }
-/* starfield sits behind the text, full-bleed across the whole hero */
+/* YOUR Milky Way photo — its own layer so it can slowly drift/zoom (Ken Burns) */
+.hero-bg{
+  position:absolute;inset:-6%;z-index:0;pointer-events:none;
+  background-image:url("images/milkyway-hero.jpg");
+  background-size:cover;background-position:center center;
+  will-change:transform;
+  animation:kenburns 30s ease-in-out infinite alternate;
+}
+@keyframes kenburns{
+  0%  {transform:scale(1.08) translate(-3.5%, 2.2%);}
+  100%{transform:scale(1.22) translate(3.5%, -2.2%);}
+}
+/* scintillation shimmer — makes the real stars in the photo feel alive */
+.hero-shimmer{
+  position:absolute;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(120,140,180,.16), transparent 70%);
+  animation:shimmer 6s ease-in-out infinite;
+}
+@keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.85;}}
+/* soft vignette + gradient so the title stays legible over the photo */
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at center, rgba(6,8,14,0) 45%, rgba(6,8,14,.45) 100%),
+    linear-gradient(to bottom, rgba(6,8,14,.35) 0%, rgba(6,8,14,.05) 35%, rgba(6,8,14,.05) 65%, rgba(6,8,14,.55) 100%);
+}
+/* starfield sits over the photo, full-bleed across the whole hero */
 #stars{
   position:absolute;inset:0;width:100%;height:100%;
-  z-index:0;pointer-events:none;
+  z-index:1;pointer-events:none;
 }
 /* mouse-tracking glow — sits above starfield, below text */
 .hero-glow{
@@ -61,8 +88,8 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   will-change:left,top;
 }
 .hero-glow.on{opacity:1;}
-/* all hero text/badge sits above the starfield, constrained to a centered column */
-.hero > *:not(#stars):not(.hero-glow){position:relative;z-index:1;max-width:1100px;margin-left:auto;margin-right:auto;text-align:center;}
+/* all hero text/badge sits above the photo + starfield, constrained to a centered column */
+.hero > *:not(#stars):not(.hero-glow):not(.hero-bg):not(.hero-shimmer){position:relative;z-index:2;max-width:1100px;margin-left:auto;margin-right:auto;text-align:center;}
 
 /* text fade-in on load: each line rises + fades, staggered */
 .hero .eyebrow,.hero h1,.hero .sub,.hero .byline{
@@ -279,6 +306,7 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
   .frame img{transition:none;}
   html{scroll-behavior:auto;}
   .hero-glow{display:none;}
+  .hero-bg,.hero-shimmer{animation:none;}
 }
 </style>
 </head>
@@ -288,8 +316,9 @@ img,video{display:block;width:100%;height:100%;object-fit:cover;}
      HERO — edit the title / subtitle here
      ============================================================ -->
 <header class="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-shimmer" aria-hidden="true"></div>
   <canvas id="stars" aria-hidden="true"></canvas>
-  <div class="hero-glow" id="heroGlow" aria-hidden="true"></div>
 
   <h1 id="heroTitle">The Astrophotography Gallery</h1>
   <p class="sub" id="heroSub">Several years of chasing faint light from a New England driveway.</p>
@@ -683,135 +712,64 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ============================================================
-   HERO STARFIELD — 3D depth parallax + mouse-tracking glow
-   Stars live on 3 depth layers; nearer layers are bigger, brighter,
-   and react more to the mouse, creating a sense of depth.
-   Tune the CONFIG block to change the feel.
+   HERO — photo background with a live starfield over it.
+   Your Milky Way photo (images/milkyway-hero.jpg) drifts slowly (CSS Ken Burns);
+   these canvas stars twinkle + drift + parallax on top. No shooting stars.
    ============================================================ */
 (function(){
-  if(REDUCE) return;                       // respect reduced-motion: no starfield
-  const canvas = document.getElementById('stars');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   const hero = document.querySelector('.hero');
-  const glow = document.getElementById('heroGlow');
+  const bg   = document.querySelector('.hero-bg');
+  const canvas = document.getElementById('stars'); if(!canvas) return;
+  const ctx = canvas.getContext('2d');
 
-  /* ---- CONFIG (safe to tweak) ---- */
-  const STAR_DENSITY = 0.00024;  // stars per pixel — higher = more stars
-  const DRIFT_X = 0.10;          // base sideways drift (px/frame)
-  const DRIFT_Y = 0.035;         // base downward drift
-  const TWINKLE = 0.5;           // brightness pulsing (0–1)
-  const PARALLAX = 26;           // how far the nearest layer shifts with the mouse (px)
-  const EASE = 0.06;             // how smoothly the parallax follows the mouse (0–1)
-  const SHOOT_MIN = 6000;        // min ms between shooting stars
-  const SHOOT_MAX = 14000;       // max ms between shooting stars
+  /* ---- CONFIG ---- */
+  const STAR_DENSITY=0.00026;
+  const DRIFT_X=0.11, DRIFT_Y=0.04, TWINKLE=1.1, PARALLAX=34, EASE=0.07;
+  const BRIGHT_FRACTION=0.09;
 
-  /* three depth layers: [depth factor, size mult, brightness mult] */
-  const LAYERS = [
-    {depth:0.35, size:0.7, bright:0.6},   // far — small, dim, barely moves
-    {depth:0.7,  size:1.0, bright:0.85},  // mid
-    {depth:1.2,  size:1.5, bright:1.1}    // near — big, bright, moves most
+  const COLORS=[[202,225,255],[230,240,255],[255,255,255],[255,245,230],[255,225,185],[255,200,160]];
+  const CW=[0.12,0.18,0.28,0.22,0.13,0.07];
+  function pick(){let r=Math.random(),a=0;for(let i=0;i<COLORS.length;i++){a+=CW[i];if(r<=a)return COLORS[i];}return COLORS[2];}
+
+  const LAYERS=[
+    {depth:0.4,size:0.7,bright:0.6,tw:0.7,dr:0.6},
+    {depth:0.8,size:1.0,bright:0.85,tw:1.2,dr:1.0},
+    {depth:1.3,size:1.4,bright:1.05,tw:1.7,dr:1.3}
   ];
-
-  let W, H, stars=[], shooters=[];
-  const dpr = Math.min(window.devicePixelRatio||1, 2);
-  let mx=0, my=0, tx=0, ty=0;   // target + eased mouse offset (-1..1)
+  let W,H,stars=[]; const dpr=Math.min(window.devicePixelRatio||1,2); let mx=0,my=0,tx=0,ty=0;
 
   function resize(){
-    W = hero.clientWidth; H = hero.clientHeight;
-    canvas.width = W*dpr; canvas.height = H*dpr;
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    const count = Math.round(W*H*STAR_DENSITY);
-    stars = [];
-    for(let i=0;i<count;i++){
-      const layer = LAYERS[i % LAYERS.length];
-      stars.push({
-        x:Math.random()*W, y:Math.random()*H,
-        r:(Math.random()*1.1+0.3)*layer.size,
-        base:(Math.random()*0.5+0.35)*layer.bright,
-        phase:Math.random()*Math.PI*2,
-        speed:Math.random()*0.8+0.4,
-        L:layer
-      });
-    }
+    W=hero.clientWidth;H=hero.clientHeight;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const n=Math.round(W*H*STAR_DENSITY);stars=[];
+    for(let i=0;i<n;i++){const L=LAYERS[i%LAYERS.length];const br=Math.random()<BRIGHT_FRACTION;
+      stars.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.0+0.3)*L.size*(br?2:1),
+        base:(Math.random()*0.5+0.3)*L.bright*(br?1.3:1),phase:Math.random()*Math.PI*2,
+        speed:(Math.random()*0.8+0.4)*L.tw,col:pick(),br,L});}
   }
+  hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();tx=((e.clientX-r.left)/r.width-0.5)*2;ty=((e.clientY-r.top)/r.height-0.5)*2;});
+  hero.addEventListener('pointerleave',()=>{tx=0;ty=0;});
 
-  function spawnShooter(){
-    const startX = Math.random()*W*0.6;
-    const startY = Math.random()*H*0.4;
-    const ang = Math.PI/5 + Math.random()*0.25;
-    const speed = 6 + Math.random()*3;
-    shooters.push({
-      x:startX, y:startY,
-      vx:Math.cos(ang)*speed, vy:Math.sin(ang)*speed,
-      life:0, max:60 + Math.random()*30, len:120+Math.random()*80
-    });
-    setTimeout(spawnShooter, SHOOT_MIN + Math.random()*(SHOOT_MAX-SHOOT_MIN));
-  }
-
-  /* mouse / pointer tracking (relative to hero center, -1..1) */
-  function onMove(e){
-    const rect = hero.getBoundingClientRect();
-    const px = (e.clientX - rect.left)/rect.width;
-    const py = (e.clientY - rect.top)/rect.height;
-    tx = (px - 0.5)*2;
-    ty = (py - 0.5)*2;
-    // position the glow at the pointer
-    glow.style.left = (e.clientX - rect.left) + 'px';
-    glow.style.top  = (e.clientY - rect.top)  + 'px';
-    glow.classList.add('on');
-  }
-  hero.addEventListener('pointermove', onMove);
-  hero.addEventListener('pointerleave', ()=>{ tx=0; ty=0; glow.classList.remove('on'); });
+  function star(s,x,y,a){const[r,g,b]=s.col;const rad=s.r*(s.br?3:2.2);
+    const grd=ctx.createRadialGradient(x,y,0,x,y,rad);
+    grd.addColorStop(0,`rgba(${r},${g},${b},${a})`);grd.addColorStop(0.3,`rgba(${r},${g},${b},${a*0.45})`);grd.addColorStop(1,`rgba(${r},${g},${b},0)`);
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=`rgba(${r},${g},${b},${Math.min(1,a*1.05)})`;ctx.beginPath();ctx.arc(x,y,s.r*0.55,0,Math.PI*2);ctx.fill();}
 
   let t=0;
-  function frame(){
-    t++;
-    // ease the mouse offset toward its target
-    mx += (tx - mx)*EASE;
-    my += (ty - my)*EASE;
-
+  function frame(){t++;mx+=(tx-mx)*EASE;my+=(ty-my)*EASE;
+    if(bg) bg.style.marginLeft=(-mx*20)+'px', bg.style.marginTop=(-my*20)+'px';
     ctx.clearRect(0,0,W,H);
+    for(const s of stars){s.x+=DRIFT_X*s.L.depth*s.L.dr;s.y+=DRIFT_Y*s.L.depth*s.L.dr;
+      if(s.x>W+20)s.x=-20;if(s.x<-20)s.x=W+20;if(s.y>H+20)s.y=-20;
+      const ox=-mx*PARALLAX*s.L.depth,oy=-my*PARALLAX*s.L.depth;
+      const tw=s.base+Math.sin(t*0.02*s.speed+s.phase)*TWINKLE*0.4*s.L.tw;
+      star(s,s.x+ox,s.y+oy,Math.max(0,Math.min(1,tw)));}
+    requestAnimationFrame(frame);}
 
-    /* stars with depth-based drift + parallax */
-    for(const s of stars){
-      s.x += DRIFT_X*s.L.depth;
-      s.y += DRIFT_Y*s.L.depth;
-      if(s.x>W+20) s.x=-20; if(s.x<-20) s.x=W+20;
-      if(s.y>H+20) s.y=-20;
-      // parallax offset: nearer layers (bigger depth) shift more with the mouse
-      const ox = -mx*PARALLAX*s.L.depth;
-      const oy = -my*PARALLAX*s.L.depth;
-      const tw = s.base + Math.sin(t*0.02*s.speed + s.phase)*TWINKLE*0.35;
-      const a = Math.max(0, Math.min(1, tw));
-      ctx.beginPath();
-      ctx.arc(s.x+ox, s.y+oy, s.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(235,238,245,${a})`;
-      ctx.fill();
-    }
-
-    /* shooting stars */
-    for(let i=shooters.length-1;i>=0;i--){
-      const m = shooters[i];
-      m.x += m.vx; m.y += m.vy; m.life++;
-      const fade = 1 - m.life/m.max;
-      if(fade<=0 || m.x>W+100 || m.y>H+100){ shooters.splice(i,1); continue; }
-      const tailX = m.x - m.vx*(m.len/6);
-      const tailY = m.y - m.vy*(m.len/6);
-      const grad = ctx.createLinearGradient(m.x,m.y,tailX,tailY);
-      grad.addColorStop(0, `rgba(255,250,240,${fade})`);
-      grad.addColorStop(1, `rgba(255,250,240,0)`);
-      ctx.strokeStyle = grad; ctx.lineWidth = 1.6; ctx.lineCap='round';
-      ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(tailX,tailY); ctx.stroke();
-    }
-
-    requestAnimationFrame(frame);
-  }
-
-  resize();
-  window.addEventListener('resize', resize);
-  requestAnimationFrame(frame);
-  setTimeout(spawnShooter, 2500);
+  resize();window.addEventListener('resize',resize);
+  if(!reduce) requestAnimationFrame(frame);
+  else for(const s of stars) star(s,s.x,s.y,s.base);
 })();
 </script>
 </body>
